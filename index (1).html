@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stijn Geerts — Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+    --border: #30363d; --border2: #3d444d;
+    --text: #e6edf3; --text2: #8b949e; --text3: #656d76;
+    --accent: #58a6ff; --accent2: #1f6feb;
+    --green: #3fb950; --orange: #d29922; --purple: #bc8cff;
+    --mono: 'JetBrains Mono', monospace; --sans: 'Inter', sans-serif;
+  }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.6; min-height: 100vh; }
+
+  header { border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; background: rgba(13,17,23,0.92); backdrop-filter: blur(8px); z-index: 100; }
+  .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .logo { font-family: var(--mono); font-size: 14px; font-weight: 700; color: var(--text); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .logo .prompt { color: var(--green); }
+  .logo .cursor { display: inline-block; width: 8px; height: 14px; background: var(--accent); animation: blink 1.1s step-end infinite; vertical-align: middle; }
+  @keyframes blink { 50% { opacity: 0; } }
+  nav { display: flex; gap: 4px; align-items: center; }
+  nav a { font-family: var(--mono); font-size: 12px; color: var(--text2); text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: color 0.15s, background 0.15s; }
+  nav a:hover { color: var(--text); background: var(--bg3); }
+
+  .hero { max-width: 1100px; margin: 0 auto; padding: 80px 2rem 64px; display: grid; grid-template-columns: 1fr auto; gap: 3rem; align-items: center; }
+  .hero-text h1 { font-family: var(--mono); font-size: clamp(26px, 4vw, 42px); font-weight: 700; line-height: 1.25; margin-bottom: 1rem; }
+  .hero-text h1 .name { color: var(--accent); }
+  .hero-text h1 .builds { color: var(--green); }
+  .hero-text p { color: var(--text2); font-size: 16px; max-width: 560px; margin-bottom: 2rem; line-height: 1.7; }
+  .tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag { font-family: var(--mono); font-size: 11px; padding: 4px 10px; border-radius: 20px; border: 1px solid; }
+  .tag.embedded { color: var(--green); border-color: #238636; background: rgba(35,134,54,0.1); }
+  .tag.firmware  { color: var(--accent); border-color: var(--accent2); background: rgba(31,111,235,0.1); }
+  .tag.hardware  { color: var(--orange); border-color: #9e6a03; background: rgba(158,106,3,0.1); }
+  .tag.printing  { color: var(--purple); border-color: #8957e5; background: rgba(137,87,229,0.1); }
+  .tag.home      { color: #79c0ff; border-color: #1158a7; background: rgba(17,88,167,0.1); }
+  .tag.software  { color: #ff7b72; border-color: #b62324; background: rgba(182,35,36,0.1); }
+  .hero-stats { display: flex; flex-direction: column; gap: 16px; min-width: 160px; }
+  .stat { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; text-align: center; }
+  .stat .num { font-family: var(--mono); font-size: 28px; font-weight: 700; color: var(--accent); }
+  .stat .label { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .tabs-bar { border-bottom: 1px solid var(--border); padding: 0 2rem; }
+  .tabs-inner { max-width: 1100px; margin: 0 auto; display: flex; }
+  .page-tab { font-family: var(--mono); font-size: 13px; color: var(--text2); padding: 12px 20px; cursor: pointer; border: none; border-bottom: 2px solid transparent; background: none; margin-bottom: -1px; transition: color 0.15s, border-color 0.15s; }
+  .page-tab:hover { color: var(--text); }
+  .page-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .page-section { display: none; padding-top: 2rem; }
+  .page-section.active { display: block; }
+
+  .filters-section { max-width: 1100px; margin: 0 auto; padding: 0 2rem 2rem; }
+  .section-label { font-family: var(--mono); font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .filter-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+  .filter-btn { font-family: var(--mono); font-size: 12px; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); cursor: pointer; transition: all 0.15s; }
+  .filter-btn:hover { border-color: var(--border2); color: var(--text); }
+  .filter-btn.active { background: var(--accent2); border-color: var(--accent); color: #fff; }
+
+  /* PROJECT CARDS */
+  .projects-section { max-width: 1100px; margin: 0 auto; padding: 0 2rem 4rem; }
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+
+  .project-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: border-color 0.2s; }
+  .project-card:hover { border-color: var(--border2); }
+  .project-card.hidden { display: none; }
+
+  .card-summary { padding: 20px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
+  .card-summary:hover .card-title { color: var(--accent); }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .card-icon { width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .icon-embedded { background: rgba(35,134,54,0.15); }
+  .icon-firmware  { background: rgba(31,111,235,0.15); }
+  .icon-hardware  { background: rgba(158,106,3,0.15); }
+  .icon-printing  { background: rgba(137,87,229,0.15); }
+  .icon-software  { background: rgba(182,35,36,0.15); }
+  .icon-home      { background: rgba(17,88,167,0.15); }
+
+  .card-expand-hint { font-family: var(--mono); font-size: 10px; color: var(--text3); display: flex; align-items: center; gap: 4px; transition: color 0.15s; }
+  .card-expand-hint .arrow { transition: transform 0.25s; display: inline-block; }
+  .project-card.open .card-expand-hint .arrow { transform: rotate(90deg); }
+  .project-card.open .card-expand-hint { color: var(--accent); }
+
+  .card-title { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.3; transition: color 0.15s; }
+  .card-short-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+  .card-tag { font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 4px; background: var(--bg3); color: var(--text3); border: 1px solid var(--border); }
+
+  /* EXPANDED DETAIL */
+  .card-detail { display: none; border-top: 1px solid var(--border); padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .project-card:not(.open) .card-detail { display: none; }
+  .project-card.open .card-detail { display: flex; }
+
+  .detail-section-label { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
+  .detail-desc { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+  /* PHOTO PLACEHOLDER */
+  .photo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .photo-slot { aspect-ratio: 1; border-radius: 6px; background: var(--bg3); border: 1px dashed var(--border2); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--text3); }
+
+  .card-materials { display: flex; flex-wrap: wrap; gap: 6px; }
+  .mat-badge { font-family: var(--mono); font-size: 10px; padding: 3px 9px; border-radius: 4px; border: 1px solid; }
+  .mat-3d-self   { color: var(--purple); border-color: #8957e5; background: rgba(137,87,229,0.1); }
+  .mat-purchased { color: var(--green); border-color: #238636; background: rgba(35,134,54,0.1); }
+  .mat-designed  { color: var(--accent); border-color: var(--accent2); background: rgba(31,111,235,0.1); }
+
+  .card-footer-detail { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--text3); padding-top: 8px; border-top: 1px solid var(--border); }
+
+  /* TOOLS TAB */
+  .tools-section { max-width: 1100px; margin: 0 auto; padding: 0 2rem 4rem; }
+  .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .tool-group { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .tool-group-title { font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+  .tool-list { display: flex; flex-direction: column; gap: 10px; }
+  .tool-item { display: flex; align-items: center; gap: 10px; }
+  .tool-icon { font-size: 16px; width: 22px; text-align: center; flex-shrink: 0; }
+  .tool-name { color: var(--text); font-size: 13px; }
+  .tool-sub { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-family: var(--mono); font-size: 11px; color: var(--text3); }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 680px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-stats { flex-direction: row; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo"><span class="prompt">~/</span>stijn-geerts<span class="cursor"></span></a>
+    <nav>
+      <a href="game.html">🎮 game</a>
+      <a href="private.html">🔒 private</a>
+      <a href="https://www.linkedin.com/in/stijn-geerts-665039257/" target="_blank">linkedin</a>
+      <a href="https://github.com/Stinos3" target="_blank">github</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1>Hello, I am <span class="name">Stijn Geerts</span>.<br>I <span class="builds">build things</span>.</h1>
+    <p>Electrical Engineer with a passion for precision electronics, hardware design, PCBA, prototyping, 3D design, and home projects. I take ideas from concept to finished build — whether that's a custom PCB, a printed enclosure, or an automated corner of my home.</p>
+    <div class="tags">
+      <span class="tag embedded">Embedded Systems</span>
+      <span class="tag firmware">Firmware / ESP32</span>
+      <span class="tag hardware">Hardware &amp; PCBA</span>
+      <span class="tag printing">3D Design</span>
+      <span class="tag home">Home Automation</span>
+      <span class="tag software">Software</span>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="num" id="stat-total">0</div><div class="label">Projects</div></div>
+    <div class="stat"><div class="num" id="stat-cats">0</div><div class="label">Categories</div></div>
+  </div>
+</section>
+
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <button class="page-tab active" data-tab="projects">Projects</button>
+    <button class="page-tab" data-tab="tools">Tools &amp; Software</button>
+  </div>
+</div>
+
+<!-- PROJECTS TAB -->
+<div class="page-section active" id="tab-projects">
+  <div class="filters-section">
+    <p class="section-label">Filter by category</p>
+    <div class="filter-btns">
+      <button class="filter-btn active" data-filter="all">All projects</button>
+      <button class="filter-btn" data-filter="embedded">Embedded</button>
+      <button class="filter-btn" data-filter="firmware">Firmware</button>
+      <button class="filter-btn" data-filter="hardware">Hardware</button>
+      <button class="filter-btn" data-filter="printing">3D Printing</button>
+      <button class="filter-btn" data-filter="home">Home</button>
+      <button class="filter-btn" data-filter="software">Software</button>
+    </div>
+  </div>
+  <div class="projects-section">
+    <div class="projects-grid" id="grid">
+
+      <!-- HAT RACK -->
+      <div class="project-card" data-cat="home printing">
+        <div class="card-summary">
+          <div class="card-top">
+            <div class="card-icon icon-home">🎩</div>
+            <span class="card-expand-hint"><span class="arrow">▶</span> details</span>
+          </div>
+          <div class="card-title">Hat Rack</div>
+          <div class="card-short-desc">Wall-mounted hat rack with 30+ hooks, self-designed in SolidWorks and printed at home.</div>
+          <div class="card-tags"><span class="card-tag">SolidWorks</span><span class="card-tag">PLA</span><span class="card-tag">Bambu A1</span><span class="card-tag">Home</span></div>
+        </div>
+        <div class="card-detail">
+          <div>
+            <div class="detail-section-label">About</div>
+            <div class="detail-desc">Wall-mounted hat rack with 30+ hooks, fully designed in SolidWorks using a personal maker account. Each hook individually modelled for a clean, consistent finish. Printed at home on the Bambu A1 in PLA.</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Photos</div>
+            <div class="photo-grid">
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-section-label">Materials &amp; Production</div>
+            <div class="card-materials">
+              <span class="mat-badge mat-designed">✏️ Self designed — SolidWorks</span>
+              <span class="mat-badge mat-3d-self">🖨️ 3D printed — self · PLA</span>
+            </div>
+          </div>
+          <div class="card-footer-detail"><span>2024</span><span>Home project</span></div>
+        </div>
+      </div>
+
+      <!-- AUTOMATED CURTAIN -->
+      <div class="project-card" data-cat="home printing firmware">
+        <div class="card-summary">
+          <div class="card-top">
+            <div class="card-icon icon-home">🪟</div>
+            <span class="card-expand-hint"><span class="arrow">▶</span> details</span>
+          </div>
+          <div class="card-title">Automated Curtain</div>
+          <div class="card-short-desc">Motorised curtain system — currently in design phase with custom 3D printed adaptations.</div>
+          <div class="card-tags"><span class="card-tag">Home Automation</span><span class="card-tag">Motor</span><span class="card-tag">Bambu Lab</span></div>
+        </div>
+        <div class="card-detail">
+          <div>
+            <div class="detail-section-label">About</div>
+            <div class="detail-desc">Motorised curtain system currently in design phase. Base model sourced from Bambu Lab's model library, with custom adaptations in progress for fit and mounting. Target: physical button and automatic time schedule control.</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Photos</div>
+            <div class="photo-grid">
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-section-label">Materials &amp; Production</div>
+            <div class="card-materials">
+              <span class="mat-badge mat-3d-self">🖨️ 3D printed — self</span>
+              <span class="mat-badge mat-purchased">🛒 Parts to be purchased</span>
+            </div>
+          </div>
+          <div class="card-footer-detail"><span>2024 — ongoing</span><span>Home project</span></div>
+        </div>
+      </div>
+
+      <!-- DIMMER -->
+      <div class="project-card" data-cat="home hardware">
+        <div class="card-summary">
+          <div class="card-top">
+            <div class="card-icon icon-home">💡</div>
+            <span class="card-expand-hint"><span class="arrow">▶</span> details</span>
+          </div>
+          <div class="card-title">Rotary Dimmer Switches</div>
+          <div class="card-short-desc">Replaced wall switches with ECO-DIM.04 triple dimmers. Self-installed, tuned for filament lamps.</div>
+          <div class="card-tags"><span class="card-tag">ECO-DIM.04</span><span class="card-tag">Kopp HK05</span><span class="card-tag">E27</span></div>
+        </div>
+        <div class="card-detail">
+          <div>
+            <div class="detail-section-label">About</div>
+            <div class="detail-desc">Replaced standard wall switches with triple ECO-DIM.04 rotary dimmers in a Kopp HK05 frame. Self-installed — hardware purchased off the shelf. Carefully tuned for low-wattage E27 filament lamps without flicker or buzz.</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Photos</div>
+            <div class="photo-grid">
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-section-label">Materials &amp; Production</div>
+            <div class="card-materials">
+              <span class="mat-badge mat-purchased">🛒 Parts purchased</span>
+            </div>
+          </div>
+          <div class="card-footer-detail"><span>2024</span><span>Home project</span></div>
+        </div>
+      </div>
+
+      <!-- SMART CLOCK -->
+      <div class="project-card" data-cat="firmware embedded hardware">
+        <div class="card-summary">
+          <div class="card-top">
+            <div class="card-icon icon-firmware">🕐</div>
+            <span class="card-expand-hint"><span class="arrow">▶</span> details</span>
+          </div>
+          <div class="card-title">Smart Alarm Clock — WT32-ETH01</div>
+          <div class="card-short-desc">ESP32-based smart clock with TFT display, touch, environmental sensor and NTP sync.</div>
+          <div class="card-tags"><span class="card-tag">ESP32</span><span class="card-tag">TFT</span><span class="card-tag">BME680</span><span class="card-tag">PlatformIO</span></div>
+        </div>
+        <div class="card-detail">
+          <div>
+            <div class="detail-section-label">About</div>
+            <div class="detail-desc">ESP32-based smart clock built on the WT32-ETH01 board. Features ST7796 TFT display, FT6336 capacitive touch, BME680 environmental sensor (temp/humidity/pressure) and DS3231 RTC. WiFi/NTP time sync, OpenWeatherMap integration, theme switching, and both analog and digital clock UI modes.</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Photos</div>
+            <div class="photo-grid">
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-section-label">Materials &amp; Production</div>
+            <div class="card-materials">
+              <span class="mat-badge mat-purchased">🛒 Parts purchased</span>
+            </div>
+          </div>
+          <div class="card-footer-detail"><span>2024</span><span>Hobby project</span></div>
+        </div>
+      </div>
+
+      <!-- SOLENOID CONTROLLER -->
+      <div class="project-card" data-cat="embedded hardware firmware">
+        <div class="card-summary">
+          <div class="card-top">
+            <div class="card-icon icon-embedded">🔧</div>
+            <span class="card-expand-hint"><span class="arrow">▶</span> details</span>
+          </div>
+          <div class="card-title">Solenoid Valve Controller</div>
+          <div class="card-short-desc">Arduino Mega with 24 solenoid valves, MCP23017 expanders and NEMA14 stepper drivers.</div>
+          <div class="card-tags"><span class="card-tag">Arduino Mega</span><span class="card-tag">MCP23017</span><span class="card-tag">TMC2226</span><span class="card-tag">PWM</span></div>
+        </div>
+        <div class="card-detail">
+          <div>
+            <div class="detail-section-label">About</div>
+            <div class="detail-desc">Arduino Mega 2560 with RAMPS 1.4, three MCP23017 I2C expanders (400 kHz) and 24 solenoid valves (JF-0530B 24V). PWM peak-and-hold approach for thermal management. Also drives 5 NEMA14 linear steppers via TMC2226 UART drivers with StallGuard.</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Photos</div>
+            <div class="photo-grid">
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-section-label">Materials &amp; Production</div>
+            <div class="card-materials">
+              <span class="mat-badge mat-purchased">🛒 Parts purchased</span>
+            </div>
+          </div>
+          <div class="card-footer-detail"><span>2024</span><span>Hobby project</span></div>
+        </div>
+      </div>
+
+      <!-- BIOSENSOR -->
+      <div class="project-card" data-cat="hardware software">
+        <div class="card-summary">
+          <div class="card-top">
+            <div class="card-icon icon-hardware">🔬</div>
+            <span class="card-expand-hint"><span class="arrow">▶</span> details</span>
+          </div>
+          <div class="card-title">Capacitive Biosensor — IDE</div>
+          <div class="card-short-desc">IDE biosensor for liquid level detection with FDC1004 and Elmer FEM simulation.</div>
+          <div class="card-tags"><span class="card-tag">FDC1004</span><span class="card-tag">Flex PCB</span><span class="card-tag">FEM</span></div>
+        </div>
+        <div class="card-detail">
+          <div>
+            <div class="detail-section-label">About</div>
+            <div class="detail-desc">Interdigitated electrode (IDE) biosensor for liquid level detection. Research into aptamer functionalization, Elmer FEM simulation and FDC1004 hardware implementation. Electrodes sourced from PalmSens (Netherlands).</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Photos</div>
+            <div class="photo-grid">
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+            </div>
+          </div>
+          <div>
+            <div class="detail-section-label">Materials &amp; Production</div>
+            <div class="card-materials">
+              <span class="mat-badge mat-purchased">🛒 Parts — PalmSens NL</span>
+            </div>
+          </div>
+          <div class="card-footer-detail"><span>2023</span><span>Hobby project</span></div>
+        </div>
+      </div>
+
+      <!-- DATA VIZ -->
+      <div class="project-card" data-cat="software">
+        <div class="card-summary">
+          <div class="card-top">
+            <div class="card-icon icon-software">📊</div>
+            <span class="card-expand-hint"><span class="arrow">▶</span> details</span>
+          </div>
+          <div class="card-title">Syringe Test Data Visualisation</div>
+          <div class="card-short-desc">Python visualisation of force/position data from a syringe pump test setup.</div>
+          <div class="card-tags"><span class="card-tag">Python</span><span class="card-tag">Matplotlib</span><span class="card-tag">CSV</span></div>
+        </div>
+        <div class="card-detail">
+          <div>
+            <div class="detail-section-label">About</div>
+            <div class="detail-desc">Python/Spyder data visualisation for a syringe pump test setup. Plots force and position from CSV data with dual y-axes and state transition markers for clear test result analysis.</div>
+          </div>
+          <div>
+            <div class="detail-section-label">Photos</div>
+            <div class="photo-grid">
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+              <div class="photo-slot">📷</div>
+            </div>
+          </div>
+          <div class="card-footer-detail"><span>2023</span><span>Hobby project</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOOLS TAB -->
+<div class="page-section" id="tab-tools">
+  <div class="tools-section">
+    <div class="tools-grid">
+      <div class="tool-group">
+        <div class="tool-group-title">IDEs &amp; Editors</div>
+        <div class="tool-list">
+          <div class="tool-item"><span class="tool-icon">💻</span><div><div class="tool-name">VS Code</div><div class="tool-sub">Main editor</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🔧</span><div><div class="tool-name">PlatformIO</div><div class="tool-sub">Embedded dev</div></div></div>
+          <div class="tool-item"><span class="tool-icon">⚡</span><div><div class="tool-name">Arduino IDE</div><div class="tool-sub">Prototyping</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🐍</span><div><div class="tool-name">Spyder</div><div class="tool-sub">Python / data</div></div></div>
+        </div>
+      </div>
+      <div class="tool-group">
+        <div class="tool-group-title">Hardware &amp; PCB</div>
+        <div class="tool-list">
+          <div class="tool-item"><span class="tool-icon">🔌</span><div><div class="tool-name">Fritzing</div><div class="tool-sub">Schematic / PCB</div></div></div>
+          <div class="tool-item"><span class="tool-icon">📐</span><div><div class="tool-name">KiCad</div><div class="tool-sub">PCB design</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🔬</span><div><div class="tool-name">Elmer FEM</div><div class="tool-sub">Simulation</div></div></div>
+        </div>
+      </div>
+      <div class="tool-group">
+        <div class="tool-group-title">3D &amp; CAD</div>
+        <div class="tool-list">
+          <div class="tool-item"><span class="tool-icon">📦</span><div><div class="tool-name">Bambu Studio</div><div class="tool-sub">Slicer</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🎨</span><div><div class="tool-name">SolidWorks</div><div class="tool-sub">CAD — maker account</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🔷</span><div><div class="tool-name">Fusion 360</div><div class="tool-sub">CAD modelling</div></div></div>
+        </div>
+      </div>
+      <div class="tool-group">
+        <div class="tool-group-title">Languages</div>
+        <div class="tool-list">
+          <div class="tool-item"><span class="tool-icon">⚙️</span><div><div class="tool-name">C / C++</div><div class="tool-sub">Firmware</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🐍</span><div><div class="tool-name">Python</div><div class="tool-sub">Scripting / data</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🌐</span><div><div class="tool-name">HTML / CSS / JS</div><div class="tool-sub">Web</div></div></div>
+        </div>
+      </div>
+      <div class="tool-group">
+        <div class="tool-group-title">Productivity</div>
+        <div class="tool-list">
+          <div class="tool-item"><span class="tool-icon">🗂️</span><div><div class="tool-name">Obsidian</div><div class="tool-sub">Notes &amp; docs</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🐙</span><div><div class="tool-name">GitHub</div><div class="tool-sub">Version control</div></div></div>
+          <div class="tool-item"><span class="tool-icon">🤖</span><div><div class="tool-name">Claude AI</div><div class="tool-sub">AI assistant</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <a href="https://www.linkedin.com/in/stijn-geerts-665039257/" target="_blank">LinkedIn</a> ·
+  <a href="https://github.com/Stinos3" target="_blank">GitHub</a> ·
+  built with HTML/CSS · hosted on GitHub Pages
+</footer>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.page-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.page-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Filter
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.project-card').forEach(c => {
+        c.classList.toggle('hidden', f !== 'all' && !(c.dataset.cat || '').includes(f));
+      });
+    });
+  });
+
+  // Expand cards
+  document.querySelectorAll('.card-summary').forEach(summary => {
+    summary.addEventListener('click', () => {
+      const card = summary.closest('.project-card');
+      card.classList.toggle('open');
+    });
+  });
+
+  // Stats
+  function animateNum(id, target) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let n = 0;
+    const step = () => { n = Math.min(n + 1, target); el.textContent = n; if (n < target) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  const cards = document.querySelectorAll('.project-card');
+  const cats = new Set([...cards].flatMap(c => (c.dataset.cat || '').split(' ')));
+  animateNum('stat-total', cards.length);
+  animateNum('stat-cats', cats.size);
+</script>
+</body>
+</html>
